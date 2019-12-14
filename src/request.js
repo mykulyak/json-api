@@ -7,9 +7,8 @@ export class Resource {
   }
 
   static resource(data) {
-    return {
+    const result = {
       type: this.resourceType,
-      id: data.id != null ? String(data.id) : null,
       attributes: Object.entries(this.fields).reduce((accum, [key, desc]) => {
         const value = desc(data, key);
         if (value !== undefined) {
@@ -18,6 +17,19 @@ export class Resource {
         return accum;
       }, {}),
     };
+
+    let id;
+    if (data.id === null) {
+      id = null;
+    } else if (data.id !== undefined) {
+      id = String(data.id);
+    }
+
+    if (id !== undefined) {
+      result.id = id;
+    }
+
+    return result;
   }
 
   // static link(data) {

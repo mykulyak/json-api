@@ -48,6 +48,14 @@ it('properly formats resources', () => {
   });
 });
 
+it('does not include undefined IDs', () => {
+  expect(CreateResource.resource({
+  })).to.deep.equal({
+    type: 'create_resource',
+    attributes: {},
+  });
+});
+
 it('does not include undefined attributes', () => {
   expect(CreateResource.resource({
     id: 456,
