@@ -73,9 +73,13 @@ export const attribute = ({ formatter, attribute } = {}) => {
 
 export const relationship = name => {
   return (data, key, registry) => {
+    const relatedResourceClass = registry[name];
     const raw = data[key];
-    if (raw != null) {
-      const relatedResourceClass = registry[name];
+    if (Array.isArray(raw)) {
+      return {
+        data: raw.map(r => relatedResourceClass.link(r)),
+      };
+    } else if (raw != null) {
       return {
         data: relatedResourceClass.link(raw),
       };

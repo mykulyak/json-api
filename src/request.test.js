@@ -166,33 +166,46 @@ it('properly formats non-null single relationship', () => {
   });
 });
 
-// it('properly formats empty multiple relationships', () => {
-//   expect(registry.Project.document({
-//     id: 12,
-//     tasks: [],
-//   })).to.deep.equal({
-//     data: {
-//       type: 'project',
-//       id: '12',
-//       attributes: {},
-//       relationships: {
-//         tasks: {
-//           data: [],
-//         }
-//       },
-//     },
-//   });
-// });
+it('properly formats empty multiple relationships', () => {
+  expect(registry.Project.document({
+    id: 12,
+    tasks: [],
+  })).to.deep.equal({
+    data: {
+      type: 'project',
+      id: '12',
+      attributes: {},
+      relationships: {
+        tasks: {
+          data: [],
+        }
+      },
+    },
+  });
+});
 
-// it('properly formats multiple relationships', () => {
-//   expect(registry.Project.document({
-//     id: 12,
-//     tasks: [
-//       12,
-//       45,
-//     ],
-//   })).to.deep.equal({
-//     type: 'project',
-//     id: '12',
-//   });
-// });
+it('properly formats multiple relationships', () => {
+  expect(registry.Project.document({
+    id: 12,
+    tasks: [
+      1,
+      5,
+      9,
+    ],
+  })).to.deep.equal({
+    data: {
+      type: 'project',
+      id: '12',
+      attributes: {},
+      relationships: {
+        tasks: {
+          data: [
+            {type: 'task', id: '1'},
+            {type: 'task', id: '5'},
+            {type: 'task', id: '9'},
+          ],
+        }
+      },
+    },
+  });
+});
