@@ -1,0 +1,40 @@
+{
+  "name": "@mykulyak/json-api",
+  "version": "0.1.0",
+  "description": "JSON:API request &amp; response helpers.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha --require @babel/register ./src/**/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mykulyak/json-api.git"
+  },
+  "keywords": [
+    "json:api",
+    "api",
+    "request",
+    "response"
+  ],
+  "author": {
+    "name": "Andriy Mykulyak",
+    "email": "mykulyak@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mykulyak/json-api/issues"
+  },
+  "homepage": "https://github.com/mykulyak/json-api#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.5",
+    "@babel/node": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/register": "^7.7.4",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "sinon": "^7.5.0"
+  }
+}
