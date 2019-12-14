@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
-import { Registry, Resource, attribute, relationship } from './request';
+import { Resource, attribute, relationship } from './request';
+import { Registry } from './registry';
 
 class CreateResource extends Resource {
   static resourceType = "create_resource";
@@ -12,7 +13,7 @@ class CreateResource extends Resource {
 
 class Project extends Resource {
   static resourceType = "project";
-  static fields = {
+  static relationships = {
     tasks: relationship("Task"),
   };
 }
@@ -20,6 +21,9 @@ class Project extends Resource {
 class Task extends Resource {
   static resourceType = "task";
   static fields = {
+    name: attribute(),
+  };
+  static relationships = {
     project: relationship('Project'),
   };
 }
@@ -123,35 +127,70 @@ it('uses attribute formatters', () => {
   });
 });
 
-// it('properly formats documents', () => {
-//   expect(CreateResource.document({
-//     id: 879,
-//     displayName: 'name',
-//     description: 'description',
+it('properly formats null relationship', () => {
+  expect(registry.Task.resource({
+    id: 99,
+    name: 'task',
+    project: null,
+  })).to.deep.equal({
+    type: 'task',
+    id: '99',
+    attributes: {
+      name: 'task'
+    },
+    relationships: {
+      project: { data: null },
+    },
+  });
+});
+
+it('properly formats non-null single relationship', () => {
+  expect(registry.Task.resource({
+    id: 99,
+    name: 'task',
+    project: 12,
+  })).to.deep.equal({
+    type: 'task',
+    id: '99',
+    attributes: {
+      name: 'task',
+    },
+    relationships: {
+      project: {
+        data: {
+          type: 'project',
+          id: '12',
+        },
+      },
+    },
+  });
+});
+
+// it('properly formats empty multiple relationships', () => {
+//   expect(registry.Project.document({
+//     id: 12,
+//     tasks: [],
 //   })).to.deep.equal({
 //     data: {
-//       type: 'create_resource',
-//       id: '879',
-//       attributes: {
-//         displayName: 'name',
-//         description: 'description',
+//       type: 'project',
+//       id: '12',
+//       attributes: {},
+//       relationships: {
+//         tasks: {
+//           data: [],
+//         }
 //       },
 //     },
-//   });
-// });
-
-// it('properly formats null relationship', () => {
-//   expect(registry.Task.resource({
-//     id: 99,
-//     project: null,
-//   })).to.deep.equal({
 //   });
 // });
 
 // it('properly formats multiple relationships', () => {
 //   expect(registry.Project.document({
 //     id: 12,
-//     tasks: [],
+//     tasks: [
+//       12,
+//       45,
+//     ],
 //   })).to.deep.equal({
 //     type: 'project',
 //     id: '12',
