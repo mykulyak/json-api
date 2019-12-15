@@ -64,11 +64,11 @@ Using `json-api`, one can build the request from form data in the following way:
 ```js
 import { registry, attribute, relationship } from '@mykulyak/json-api';
 
-const author = registry.resource({
+const author = registry.define({
   type: 'author',
 });
 
-const createArticle = registry.resource({
+const createArticle = registry.define({
   type: 'create-article',
   attributes: ['title', 'content'],
   relationships: {
@@ -79,7 +79,7 @@ const createArticle = registry.resource({
   },
 });
 
-const request = createArticle.build({
+const request = createArticle.resource({
   authorId: 123,
   title: "Why should we use JSON:API ?",
   content: "..."
