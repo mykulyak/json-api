@@ -36,20 +36,31 @@ export class Resource {
     if (relationshipSpecs != null) {
       return Object.entries(relationshipSpecs).map(([key, value]) => {
         const getter = (data, key) => {
-          const relatedResourceClass =
-            typeof value === "string" ? registry.find(value) : value;
+          let relatedResourceClass;
+          if (typeof value === "string") {
+            relatedResourceClass = registry.find(value);
+          } else if (value instanceof Resource) {
+            relatedResourceClass = value;
+          } else {
+            relatedResourceClass = registry.find(value.type);
+          }
+
           if (!relatedResourceClass) {
             throw new Error(`Cannot find ${value} resource`);
           }
 
+          const formatRelationship = value._embed
+            ? r => relatedResourceClass.resource(r)
+            : r => relatedResourceClass.link(r);
+
           const raw = data[key];
           if (Array.isArray(raw)) {
             return {
-              data: raw.map(r => relatedResourceClass.link(r))
+              data: raw.map(formatRelationship)
             };
           } else if (raw != null) {
             return {
-              data: relatedResourceClass.link(raw)
+              data: formatRelationship(raw)
             };
           }
           return {
