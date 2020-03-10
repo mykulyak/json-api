@@ -1,6 +1,10 @@
+import { kebabCaseDeep } from "./utils";
+
+const identity = x => x;
+
 const defaultAttributeSpec = {
   getter: (data, key) => data[key],
-  formatter: value => value,
+  formatter: value => value
 };
 
 export class Resource {
@@ -14,13 +18,16 @@ export class Resource {
   normalizeAttributes(specs) {
     if (Array.isArray(specs)) {
       return specs.map(spec => {
-        if (typeof spec === 'string') {
+        if (typeof spec === "string") {
           return [spec, defaultAttributeSpec];
         }
         return spec;
       });
     } else if (specs != null) {
-      return Object.entries(specs).map(([key, value]) => ([key, { ...defaultAttributeSpec, ...value }]));
+      return Object.entries(specs).map(([key, value]) => [
+        key,
+        { ...defaultAttributeSpec, ...value }
+      ]);
     }
     return [];
   }
@@ -29,19 +36,20 @@ export class Resource {
     if (relationshipSpecs != null) {
       return Object.entries(relationshipSpecs).map(([key, value]) => {
         const getter = (data, key) => {
-          const relatedResourceClass = typeof value === 'string' ? registry.find(value) : value;
+          const relatedResourceClass =
+            typeof value === "string" ? registry.find(value) : value;
           if (!relatedResourceClass) {
             throw new Error(`Cannot find ${value} resource`);
           }
-  
+
           const raw = data[key];
           if (Array.isArray(raw)) {
             return {
-              data: raw.map(r => relatedResourceClass.link(r)),
+              data: raw.map(r => relatedResourceClass.link(r))
             };
           } else if (raw != null) {
             return {
-              data: relatedResourceClass.link(raw),
+              data: relatedResourceClass.link(raw)
             };
           }
           return {
@@ -58,20 +66,20 @@ export class Resource {
   id(value) {
     return {
       type: this.type,
-      id: value != null ? String(value) : null,
+      id: value != null ? String(value) : null
     };
   }
 
   link(value) {
     return {
       type: this.type,
-      id: value != null ? String(value) : null,
+      id: value != null ? String(value) : null
     };
   }
 
   resource(data) {
     const result = {
-      type: this.type,
+      type: this.type
     };
 
     if (data.id === null) {
@@ -80,22 +88,27 @@ export class Resource {
       result.id = String(data.id);
     }
 
-    result.attributes = this.attributes.reduce((accum, [key, desc]) => {
-      const value = desc.formatter(desc.getter(data, key));
-      if (value !== undefined) {
-        accum[key] = value;
-      }
-      return accum;
-    }, {});
-
-    if (this.relationships != null) {
-      result.relationships = this.relationships.reduce((accum, [key, desc]) => {
-        const value = desc(data, key, this.registry);
+    result.attributes = this.registry._keyTransformFunc(
+      this.attributes.reduce((accum, [key, desc]) => {
+        const value = desc.formatter(desc.getter(data, key));
         if (value !== undefined) {
           accum[key] = value;
         }
         return accum;
-      }, {});
+      }, {})
+    );
+
+    if (this.relationships != null) {
+      result.relationships = this.registry._keyTransformFunc(
+        this.relationships.reduce((accum, [key, desc]) => {
+          const value = desc(data, key, this.registry);
+          if (value !== undefined) {
+            const resultKey = this.registry._keyTransformFunc(key);
+            accum[resultKey] = value;
+          }
+          return accum;
+        }, {})
+      );
     }
 
     return result;
@@ -104,15 +117,21 @@ export class Resource {
   document(data) {
     return {
       data: {
-        ...this.resource(data),
+        ...this.resource(data)
       }
     };
   }
 }
 
 export class Registry {
-  constructor() {
+  constructor(options) {
+    this._options = options;
     this._resources = {};
+
+    this._keyTransformFunc =
+      this._options && this._options.keyTransform === "kebab"
+        ? kebabCaseDeep
+        : identity;
   }
 
   define(type, spec) {
