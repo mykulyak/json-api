@@ -22,3 +22,14 @@ export const kebabCase = str => {
 };
 
 export const kebabCaseDeep = obj => transformKeysDeep(obj, kebabCase);
+
+export const camelCase = str => {
+  return str
+    .split("-")
+    .map((s, index) =>
+      index > 0 ? s.slice(0, 1).toUpperCase() + s.slice(1) : s
+    )
+    .join("");
+};
+
+export const camelCaseDeep = obj => transformKeysDeep(obj, camelCase);
