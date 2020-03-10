@@ -32,6 +32,7 @@ const comment = registry.define("comment", {
 
 it("should be able to define a new resource", () => {
   const resource = registry.define("test", {});
+  // eslint-disable-next-line no-unused-expressions
   expect(resource).to.not.be.null;
 });
 
@@ -216,6 +217,7 @@ it("properly formats multiple relationships", () => {
 });
 
 it("handles embedding resources", () => {
+  // eslint-disable-next-line no-shadow
   const registry = new Registry({
     keyTransform: "kebab"
   });

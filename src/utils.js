@@ -1,9 +1,11 @@
 const transformKeysDeep = (obj, keyFn) => {
   if (Array.isArray(obj)) {
     return obj.map(o => transformKeysDeep(o, keyFn));
-  } else if (obj instanceof Object) {
+  }
+  if (obj instanceof Object) {
     return Object.entries(obj).reduce((accum, [key, value]) => {
       const newKey = keyFn(key);
+      // eslint-disable-next-line no-param-reassign
       accum[newKey] = transformKeysDeep(value, keyFn);
       return accum;
     }, {});
