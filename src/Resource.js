@@ -134,4 +134,15 @@ export default class Resource {
       }
     };
   }
+
+  parse = data => {
+    const result = { id: data.id != null ? Number(data.id) : null };
+
+    const attributes = this.registry.keyParseFunc(data.attributes || {});
+    Object.entries(attributes).forEach(([name, value]) => {
+      result[name] = value;
+    });
+
+    return result;
+  };
 }
