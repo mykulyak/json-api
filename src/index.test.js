@@ -203,3 +203,61 @@ it('properly formats multiple relationships', () => {
     },
   });
 });
+
+it('handles transform=kebab option properly', () => {
+  const registry2 = new Registry({
+    keyTransform: 'kebab'
+  });
+
+  registry2.define('author', {
+    attributes: ['firstName', 'email'],
+    relationships: {
+      articles: 'article',
+    },
+  });
+  
+  const article2 = registry2.define('article', {
+    attributes: ['title', 'fullContent'],
+    relationships: {
+      author: 'author',
+      commentList: 'comment',
+    },
+  });
+
+  registry2.define('comment', {
+    attributes: ['textContent', 'formattedContent'],
+    relationships: {
+      article: 'article',
+    },
+  });
+
+  expect(article2.document({
+    id: 12,
+    title: 'Article title',
+    fullContent: 'Lorem ipsum ... no i tak dalej',
+    commentList: [
+      1,
+      5,
+      9,
+    ],
+  })).to.deep.equal({
+    data: {
+      type: 'article',
+      id: '12',
+      attributes: {
+        title: 'Article title',
+        'full-content': 'Lorem ipsum ... no i tak dalej',
+      },
+      relationships: {
+        author: { data: null },
+        'comment-list': {
+          data: [
+            {type: 'comment', id: '1'},
+            {type: 'comment', id: '5'},
+            {type: 'comment', id: '9'},
+          ],
+        }
+      },
+    },
+  });
+});
