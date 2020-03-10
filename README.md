@@ -3,6 +3,8 @@
 JSON:API request &amp; response helpers. 
 
 ![Travis](https://travis-ci.org/mykulyak/json-api.svg?branch=master)
+![NPM](https://img.shields.io/npm/v/@mykulyak/json-api)
+![Licence](https://img.shields.io/npm/l/@mykulyak/json-api)
 
 ## Why json-api ?
 
