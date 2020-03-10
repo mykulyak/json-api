@@ -2,6 +2,20 @@ import { expect } from "chai";
 
 import Registry from "./Registry";
 
+describe("Registry.define", () => {
+  let registry;
+
+  beforeEach(() => {
+    registry = new Registry();
+  });
+
+  it("should be able to define a new resource", () => {
+    const resource = registry.define("test", {});
+    // eslint-disable-next-line no-unused-expressions
+    expect(resource).to.not.be.null;
+  });
+});
+
 describe("Registry.parse", () => {
   let registry;
 
@@ -34,7 +48,7 @@ describe("Registry.parse", () => {
     });
   });
 
-  it.only("should parse multiple resources with attributes only", () => {
+  it("should parse multiple resources with attributes only", () => {
     expect(
       registry.parse({
         data: [

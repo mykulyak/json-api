@@ -4,7 +4,7 @@ import { Registry } from "./index";
 
 const registry = new Registry();
 
-const author = registry.define("author", {
+registry.define("author", {
   attributes: ["name", "email"],
   relationships: {
     articles: "article"
@@ -30,19 +30,6 @@ const comment = registry.define("comment", {
   }
 });
 
-it("should be able to define a new resource", () => {
-  const resource = registry.define("test", {});
-  // eslint-disable-next-line no-unused-expressions
-  expect(resource).to.not.be.null;
-});
-
-it("properly formats resource ID", () => {
-  expect(author.id(12)).to.deep.equal({
-    type: "author",
-    id: "12"
-  });
-});
-
 it("properly formats resources", () => {
   expect(
     createArticle.resource({
@@ -55,13 +42,6 @@ it("properly formats resources", () => {
       title: "New article",
       content: "Article content ..."
     }
-  });
-});
-
-it("does not include undefined IDs", () => {
-  expect(createArticle.resource({})).to.deep.equal({
-    type: "create-article",
-    attributes: {}
   });
 });
 
@@ -85,45 +65,6 @@ it("uses attribute getters", () => {
     id: "12",
     attributes: {
       phoneNumber: "894 999 333"
-    }
-  });
-});
-
-it("uses attribute formatters", () => {
-  const customRegistry = new Registry();
-  const custom = customRegistry.define("custom", {
-    attributes: {
-      age: { formatter: Number },
-      skipIfNegative: { formatter: x => (x < 0 ? undefined : x) }
-    }
-  });
-
-  expect(
-    custom.resource({
-      id: 89,
-      age: "282",
-      skipIfNegative: 10
-    })
-  ).to.deep.equal({
-    type: "custom",
-    id: "89",
-    attributes: {
-      age: 282,
-      skipIfNegative: 10
-    }
-  });
-
-  expect(
-    custom.resource({
-      id: 89,
-      age: "282",
-      skipIfNegative: -10
-    })
-  ).to.deep.equal({
-    type: "custom",
-    id: "89",
-    attributes: {
-      age: 282
     }
   });
 });

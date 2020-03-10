@@ -135,7 +135,7 @@ export default class Resource {
     };
   }
 
-  parse = data => {
+  parse(data) {
     const result = { id: data.id != null ? Number(data.id) : null };
 
     const attributes = this.registry.keyParseFunc(data.attributes || {});
@@ -144,5 +144,5 @@ export default class Resource {
     });
 
     return result;
-  };
+  }
 }
