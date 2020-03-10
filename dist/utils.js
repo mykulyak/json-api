@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.kebabCaseDeep = exports.kebabCase = void 0;
+exports.camelCaseDeep = exports.camelCase = exports.kebabCaseDeep = exports.kebabCase = void 0;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -18,13 +18,16 @@ var transformKeysDeep = function transformKeysDeep(obj, keyFn) {
     return obj.map(function (o) {
       return transformKeysDeep(o, keyFn);
     });
-  } else if (obj instanceof Object) {
+  }
+
+  if (obj instanceof Object) {
     return Object.entries(obj).reduce(function (accum, _ref) {
       var _ref2 = _slicedToArray(_ref, 2),
           key = _ref2[0],
           value = _ref2[1];
 
-      var newKey = keyFn(key);
+      var newKey = keyFn(key); // eslint-disable-next-line no-param-reassign
+
       accum[newKey] = transformKeysDeep(value, keyFn);
       return accum;
     }, {});
@@ -48,3 +51,17 @@ var kebabCaseDeep = function kebabCaseDeep(obj) {
 };
 
 exports.kebabCaseDeep = kebabCaseDeep;
+
+var camelCase = function camelCase(str) {
+  return str.split("-").map(function (s, index) {
+    return index > 0 ? s.slice(0, 1).toUpperCase() + s.slice(1) : s;
+  }).join("");
+};
+
+exports.camelCase = camelCase;
+
+var camelCaseDeep = function camelCaseDeep(obj) {
+  return transformKeysDeep(obj, camelCase);
+};
+
+exports.camelCaseDeep = camelCaseDeep;
