@@ -134,4 +134,41 @@ export default class Resource {
       }
     };
   }
+
+  parse(data, includesMap = null) {
+    const result = { id: data.id != null ? Number(data.id) : null };
+
+    const attributes = this.registry.keyParseFunc(data.attributes || {});
+    Object.entries(attributes).forEach(([name, value]) => {
+      result[name] = value;
+    });
+
+    const getRelatedObject = link => {
+      if (link) {
+        if (includesMap) {
+          const obj = includesMap[`${link.type}:${link.id}`];
+          if (obj) {
+            return obj;
+          }
+        }
+        return Number(link.id);
+      }
+      return null;
+    };
+
+    const relationships = this.registry.keyParseFunc(data.relationships || {});
+    Object.entries(relationships).forEach(([name, value]) => {
+      if (Array.isArray(value.data)) {
+        // TODO in debug version check for heterogeneous collections
+        result[name] = value.data.map(getRelatedObject);
+      } else if (value.data) {
+        result[name] =
+          value.data.id != null ? getRelatedObject(value.data) : null;
+      } else if (value.data == null) {
+        result[name] = null;
+      }
+    });
+
+    return result;
+  }
 }

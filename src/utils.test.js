@@ -1,6 +1,6 @@
 import { expect } from "chai";
 
-import { kebabCase, kebabCaseDeep } from "./utils";
+import { kebabCase, kebabCaseDeep, camelCase } from "./utils";
 
 describe("kebabCase", () => {
   it("should convert strings to kebab case", () => {
@@ -9,6 +9,13 @@ describe("kebabCase", () => {
     expect(kebabCase("TestIdent")).to.equal("test-ident");
     expect(kebabCase("testIdent123")).to.equal("test-ident123");
     expect(kebabCase("test123Ident")).to.equal("test123-ident");
+  });
+});
+
+describe("camelCase", () => {
+  it("should convert strings to camel case", () => {
+    expect(camelCase("test-ident")).to.equal("testIdent");
+    expect(camelCase("test-123-ident")).to.equal("test123Ident");
   });
 });
 
