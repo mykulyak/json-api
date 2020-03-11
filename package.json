@@ -31,7 +31,9 @@
     "url": "https://github.com/mykulyak/json-api/issues"
   },
   "homepage": "https://github.com/mykulyak/json-api#readme",
-  "dependencies": {},
+  "dependencies": {
+    "corejs": "3.5.0"
+  },
   "devDependencies": {
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.5",
