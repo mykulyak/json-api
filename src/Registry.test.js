@@ -25,6 +25,12 @@ describe("Registry.parse", () => {
     registry.define("survey-resource-type", {
       attributes: ["title", "startDate", "endDate"]
     });
+
+    registry.define("parent", {
+      relationships: {
+        children: "children"
+      }
+    });
   });
 
   it("should parse single resource with attributes", () => {
@@ -72,5 +78,78 @@ describe("Registry.parse", () => {
       { id: 12, title: "First" },
       { id: 34, title: "Second" }
     ]);
+  });
+
+  it("parses null relationship", () => {
+    expect(
+      registry.parse({
+        data: {
+          type: "parent",
+          id: "12",
+          relationships: {
+            children: {
+              data: null
+            }
+          }
+        }
+      })
+    ).to.deep.equal({
+      id: 12,
+      children: null
+    });
+  });
+
+  it("parses single object relationship", () => {
+    expect(
+      registry.parse({
+        data: {
+          type: "parent",
+          id: "12",
+          relationships: {
+            children: {
+              data: {
+                type: "children",
+                id: "123"
+              }
+            }
+          }
+        }
+      })
+    ).to.deep.equal({
+      id: 12,
+      children: 123
+    });
+  });
+
+  it("parses multiple relationship", () => {
+    expect(
+      registry.parse({
+        data: {
+          type: "parent",
+          id: "12",
+          relationships: {
+            children: {
+              data: [
+                {
+                  type: "children",
+                  id: "123"
+                },
+                {
+                  type: "children",
+                  id: "125"
+                },
+                {
+                  type: "children",
+                  id: "127"
+                }
+              ]
+            }
+          }
+        }
+      })
+    ).to.deep.equal({
+      id: 12,
+      children: [123, 125, 127]
+    });
   });
 });

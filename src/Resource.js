@@ -143,6 +143,18 @@ export default class Resource {
       result[name] = value;
     });
 
+    const relationships = this.registry.keyParseFunc(data.relationships || {});
+    Object.entries(relationships).forEach(([name, value]) => {
+      if (Array.isArray(value.data)) {
+        // TODO in debug version check for heterogeneous collections
+        result[name] = value.data.map(item => Number(item.id));
+      } else if (value.data) {
+        result[name] = value.data.id != null ? Number(value.data.id) : null;
+      } else if (value.data == null) {
+        result[name] = null;
+      }
+    });
+
     return result;
   }
 }

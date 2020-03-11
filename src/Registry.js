@@ -30,20 +30,20 @@ export default class Registry {
   }
 
   parse(document) {
+    const parseResource = data => {
+      const resource = this.find(data.type);
+
+      if (!resource) {
+        throw new Error(`Cannot find resource ${data.type}`);
+      }
+
+      return resource.parse(data);
+    };
+
     if (Array.isArray(document.data)) {
-      return document.data.map(this.parseResource, this);
+      return document.data.map(parseResource);
     }
-    return this.parseResource(document.data);
-  }
-
-  parseResource(data) {
-    const resource = this.find(data.type);
-
-    if (!resource) {
-      throw new Error(`Cannot find resource ${data.type}`);
-    }
-
-    return resource.parse(data);
+    return parseResource(document.data);
   }
 }
 
