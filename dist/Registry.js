@@ -36,21 +36,32 @@ class Registry {
   }
 
   parse(document) {
+    var includesMap = null;
+
+    var parseResource = data => {
+      var resource = this.find(data.type);
+
+      if (!resource) {
+        throw new Error("Cannot find resource ".concat(data.type));
+      }
+
+      return resource.parse(data, includesMap);
+    };
+
+    if (Array.isArray(document.included)) {
+      includesMap = document.included.reduce((accum, res) => {
+        var resource = parseResource(res); // eslint-disable-next-line no-param-reassign
+
+        accum["".concat(res.type, ":").concat(resource.id)] = resource;
+        return accum;
+      }, {});
+    }
+
     if (Array.isArray(document.data)) {
-      return document.data.map(this.parseResource, this);
+      return document.data.map(elem => parseResource(elem, includesMap));
     }
 
-    return this.parseResource(document.data);
-  }
-
-  parseResource(data) {
-    var resource = this.find(data.type);
-
-    if (!resource) {
-      throw new Error("Cannot find resource ".concat(data.type));
-    }
-
-    return resource.parse(data);
+    return parseResource(document.data, includesMap);
   }
 
 }

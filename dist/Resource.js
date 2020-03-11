@@ -148,13 +148,41 @@ class Resource {
     };
   }
 
-  parse(data) {
+  parse(data, includesMap = null) {
     var result = {
       id: data.id != null ? Number(data.id) : null
     };
     var attributes = this.registry.keyParseFunc(data.attributes || {});
     Object.entries(attributes).forEach(([name, value]) => {
       result[name] = value;
+    });
+
+    var getRelatedObject = link => {
+      if (link) {
+        if (includesMap) {
+          var obj = includesMap["".concat(link.type, ":").concat(link.id)];
+
+          if (obj) {
+            return obj;
+          }
+        }
+
+        return Number(link.id);
+      }
+
+      return null;
+    };
+
+    var relationships = this.registry.keyParseFunc(data.relationships || {});
+    Object.entries(relationships).forEach(([name, value]) => {
+      if (Array.isArray(value.data)) {
+        // TODO in debug version check for heterogeneous collections
+        result[name] = value.data.map(getRelatedObject);
+      } else if (value.data) {
+        result[name] = value.data.id != null ? getRelatedObject(value.data) : null;
+      } else if (value.data == null) {
+        result[name] = null;
+      }
     });
     return result;
   }

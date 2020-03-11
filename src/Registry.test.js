@@ -31,6 +31,19 @@ describe("Registry.parse", () => {
         children: "children"
       }
     });
+
+    registry.define("children", {
+      relationships: {
+        parent: "parent",
+        children: "grandchildren"
+      }
+    });
+
+    registry.define("grandchildren", {
+      relationships: {
+        parent: "children"
+      }
+    });
   });
 
   it("should parse single resource with attributes", () => {
@@ -121,6 +134,34 @@ describe("Registry.parse", () => {
     });
   });
 
+  it("parses single relationship using includes map", () => {
+    expect(
+      registry.parse({
+        data: {
+          type: "parent",
+          id: "12",
+          relationships: {
+            children: {
+              data: {
+                type: "children",
+                id: "123"
+              }
+            }
+          }
+        },
+        included: [
+          {
+            type: "children",
+            id: "123"
+          }
+        ]
+      })
+    ).to.deep.equal({
+      id: 12,
+      children: { id: 123 }
+    });
+  });
+
   it("parses multiple relationship", () => {
     expect(
       registry.parse({
@@ -150,6 +191,106 @@ describe("Registry.parse", () => {
     ).to.deep.equal({
       id: 12,
       children: [123, 125, 127]
+    });
+  });
+
+  it("parses multiple relationship using includes map", () => {
+    expect(
+      registry.parse({
+        data: {
+          type: "parent",
+          id: "12",
+          relationships: {
+            children: {
+              data: [
+                {
+                  type: "children",
+                  id: "123"
+                },
+                {
+                  type: "children",
+                  id: "125"
+                },
+                {
+                  type: "children",
+                  id: "127"
+                }
+              ]
+            }
+          }
+        },
+        included: [
+          {
+            type: "children",
+            id: "123"
+          },
+          {
+            type: "children",
+            id: "125"
+          },
+          {
+            type: "children",
+            id: "127"
+          }
+        ]
+      })
+    ).to.deep.equal({
+      id: 12,
+      children: [{ id: 123 }, { id: 125 }, { id: 127 }]
+    });
+  });
+
+  it("parses nested relationships", () => {
+    expect(
+      registry.parse({
+        data: {
+          type: "parent",
+          id: "12",
+          relationships: {
+            children: {
+              data: {
+                type: "children",
+                id: "123"
+              }
+            }
+          }
+        },
+        included: [
+          {
+            type: "children",
+            id: "123",
+            relationships: {
+              parent: {
+                data: {
+                  type: "parent",
+                  id: "12"
+                }
+              },
+              children: {
+                data: {
+                  type: "grandchildren",
+                  id: "456"
+                }
+              }
+            }
+          },
+          {
+            type: "grandchildren",
+            id: "456",
+            relationships: {
+              parent: {
+                data: {
+                  type: "children",
+                  id: "123"
+                }
+              }
+            }
+          }
+        ]
+      })
+    ).to.deep.equal({
+      id: 12,
+      children: { id: 123, parent: 12, children: 456 }
     });
   });
 });

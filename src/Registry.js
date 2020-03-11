@@ -30,6 +30,8 @@ export default class Registry {
   }
 
   parse(document) {
+    let includesMap = null;
+
     const parseResource = data => {
       const resource = this.find(data.type);
 
@@ -37,13 +39,22 @@ export default class Registry {
         throw new Error(`Cannot find resource ${data.type}`);
       }
 
-      return resource.parse(data);
+      return resource.parse(data, includesMap);
     };
 
-    if (Array.isArray(document.data)) {
-      return document.data.map(parseResource);
+    if (Array.isArray(document.included)) {
+      includesMap = document.included.reduce((accum, res) => {
+        const resource = parseResource(res);
+        // eslint-disable-next-line no-param-reassign
+        accum[`${res.type}:${resource.id}`] = resource;
+        return accum;
+      }, {});
     }
-    return parseResource(document.data);
+
+    if (Array.isArray(document.data)) {
+      return document.data.map(elem => parseResource(elem, includesMap));
+    }
+    return parseResource(document.data, includesMap);
   }
 }
 
