@@ -30,9 +30,7 @@ export default class Registry {
   }
 
   parse(document) {
-    let includesMap = null;
-
-    const parseResource = data => {
+    const parseResource = (data, includesMap) => {
       const resource = this.find(data.type);
 
       if (!resource) {
@@ -42,14 +40,14 @@ export default class Registry {
       return resource.parse(data, includesMap);
     };
 
-    if (Array.isArray(document.included)) {
-      includesMap = document.included.reduce((accum, res) => {
-        const resource = parseResource(res);
-        // eslint-disable-next-line no-param-reassign
-        accum[`${res.type}:${resource.id}`] = resource;
-        return accum;
-      }, {});
-    }
+    const includesMap = Array.isArray(document.included)
+      ? document.included.reduce((accum, res) => {
+          const resource = parseResource(res);
+          // eslint-disable-next-line no-param-reassign
+          accum[`${res.type}:${resource.id}`] = resource;
+          return accum;
+        }, {})
+      : null;
 
     if (Array.isArray(document.data)) {
       return document.data.map(elem => parseResource(elem, includesMap));
