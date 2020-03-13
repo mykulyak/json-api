@@ -90,13 +90,9 @@ const request = createArticle.resource({
 
 ## Documentation
 
-TODO.
-
-What should be there:
-
-- resource definition
-- request formatting
-- response parsing & mapping (including redux-orm)
+* [Introduction](/docs/intro.md)
+* [API](/docs/api.md)
+* [FAQ](/docs/faq.md)
 
 ## Examples
 
