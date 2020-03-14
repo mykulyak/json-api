@@ -1,6 +1,6 @@
 # json-api
 
-JSON:API request &amp; response helpers. 
+JSON:API request &amp; response helpers.
 
 ![Travis](https://travis-ci.org/mykulyak/json-api.svg?branch=master)
 ![NPM](https://img.shields.io/npm/v/@mykulyak/json-api)
@@ -24,7 +24,7 @@ yarn add @mykulyak/json-api
 
 ## Quick start
 
-Consider a simple blog API designed according to JSON:API spec. It returns article, author and comment resources:
+Consider a simple blog API designed according to [JSON:API spec](https://jsonapi.org/format/). It returns article, author and comment resources:
 
 - author may have zero or more articles
 - article has one author
@@ -64,7 +64,7 @@ whereas in the application we would likely have the data look like:
 Using `json-api`, one can build the request from form data in the following way:
 
 ```js
-import { registry, attribute, relationship } from '@mykulyak/json-api';
+import { registry } from '@mykulyak/json-api';
 
 const author = registry.define({
   type: 'author',
@@ -90,9 +90,9 @@ const request = createArticle.resource({
 
 ## Documentation
 
-* [Introduction](/docs/intro.md)
-* [API](/docs/api.md)
-* [FAQ](/docs/faq.md)
+- [Introduction](/docs/intro.md)
+- [API](/docs/api.md)
+- [FAQ](/docs/faq.md)
 
 ## Examples
 
