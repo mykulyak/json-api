@@ -3,6 +3,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+Object.defineProperty(exports, "jsonApiMediaType", {
+  enumerable: true,
+  get: function () {
+    return _utils.jsonApiMediaType;
+  }
+});
 Object.defineProperty(exports, "Registry", {
   enumerable: true,
   get: function () {
@@ -21,6 +27,8 @@ Object.defineProperty(exports, "Resource", {
     return _Resource.default;
   }
 });
+
+var _utils = require("./utils");
 
 var _Registry = _interopRequireWildcard(require("./Registry"));
 

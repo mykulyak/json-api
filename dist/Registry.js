@@ -11,22 +11,21 @@ var _Resource = _interopRequireDefault(require("./Resource"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var identity = x => x;
-
 class Registry {
   constructor(options) {
     this.options = options;
     this.resources = {};
-    this.keyTransformFunc = this.options && this.options.keyTransform === "kebab" ? _utils.kebabCaseDeep : identity;
-    this.keyParseFunc = this.options && this.options.keyTransform === "kebab" ? _utils.camelCaseDeep : identity;
+    this.keyTransformFunc = this.options && this.options.keyTransform === "kebab" ? _utils.kebabCaseDeep : _utils.identity;
+    this.keyParseFunc = this.options && this.options.keyTransform === "kebab" ? _utils.camelCaseDeep : _utils.identity;
   }
 
   define(type, spec) {
     var {
+      id,
       attributes,
       relationships
     } = spec;
-    var resource = new _Resource.default(this, type, attributes, relationships);
+    var resource = new _Resource.default(this, type, id, attributes, relationships);
     this.resources[type] = resource;
     return resource;
   }
@@ -35,10 +34,18 @@ class Registry {
     return this.resources[type];
   }
 
-  parse(document) {
-    var includesMap = null;
+  format(type, data) {
+    var resource = this.find(type);
 
-    var parseResource = data => {
+    if (!resource) {
+      throw new Error("Cannot find resource ".concat(type));
+    }
+
+    return resource.document(data);
+  }
+
+  parse(document) {
+    var parseResource = (data, includesMap) => {
       var resource = this.find(data.type);
 
       if (!resource) {
@@ -48,14 +55,12 @@ class Registry {
       return resource.parse(data, includesMap);
     };
 
-    if (Array.isArray(document.included)) {
-      includesMap = document.included.reduce((accum, res) => {
-        var resource = parseResource(res); // eslint-disable-next-line no-param-reassign
+    var includesMap = Array.isArray(document.included) ? document.included.reduce((accum, res) => {
+      var resource = parseResource(res); // eslint-disable-next-line no-param-reassign
 
-        accum["".concat(res.type, ":").concat(resource.id)] = resource;
-        return accum;
-      }, {});
-    }
+      accum["".concat(res.type, ":").concat(resource.id)] = resource;
+      return accum;
+    }, {}) : null;
 
     if (Array.isArray(document.data)) {
       return document.data.map(elem => parseResource(elem, includesMap));

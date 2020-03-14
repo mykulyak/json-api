@@ -3,7 +3,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.camelCaseDeep = exports.camelCase = exports.kebabCaseDeep = exports.kebabCase = void 0;
+exports.camelCaseDeep = exports.camelCase = exports.kebabCaseDeep = exports.kebabCase = exports.identity = exports.jsonApiMediaType = void 0;
+var jsonApiMediaType = "(application/vnd.api+json";
+exports.jsonApiMediaType = jsonApiMediaType;
+
+var identity = x => x;
+
+exports.identity = identity;
 
 var transformKeysDeep = (obj, keyFn) => {
   if (Array.isArray(obj)) {

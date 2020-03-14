@@ -11,13 +11,33 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+var defaultIdSpec = {
+  attr: "id",
+
+  format(value) {
+    if (value === null) {
+      return null;
+    }
+
+    if (value === undefined) {
+      return undefined;
+    }
+
+    return String(value);
+  },
+
+  parse(resourceObj) {
+    return resourceObj[this.attr] != null ? Number(resourceObj[this.attr]) : null;
+  }
+
+};
 var defaultAttributeSpec = {
   getter: (data, key) => data[key],
   formatter: value => value
 };
 
 class Resource {
-  constructor(_registry, type, attributes, relationships) {
+  constructor(_registry, type, id, attributes, relationships) {
     _defineProperty(this, "normalizeAttributes", specs => {
       if (Array.isArray(specs)) {
         return specs.map(spec => {
@@ -85,6 +105,7 @@ class Resource {
 
     this.registry = _registry;
     this.type = type;
+    this.idSpec = _objectSpread({}, defaultIdSpec, {}, id);
     this.attributes = this.normalizeAttributes(attributes);
     this.relationships = this.normalizeRelationships(relationships, _registry);
   }
@@ -92,14 +113,14 @@ class Resource {
   id(value) {
     return {
       type: this.type,
-      id: value != null ? String(value) : null
+      id: this.idSpec.format(value)
     };
   }
 
   link(value) {
     return {
       type: this.type,
-      id: value != null ? String(value) : null
+      id: this.idSpec.format(value)
     };
   }
 
@@ -107,11 +128,10 @@ class Resource {
     var result = {
       type: this.type
     };
+    var id = this.idSpec.format(data[this.idSpec.attr]);
 
-    if (data.id === null) {
-      result.id = null;
-    } else if (data.id !== undefined) {
-      result.id = String(data.id);
+    if (id !== undefined) {
+      result.id = id;
     }
 
     result.attributes = this.registry.keyTransformFunc(this.attributes.reduce((accum, [key, desc]) => {
@@ -149,9 +169,8 @@ class Resource {
   }
 
   parse(data, includesMap = null) {
-    var result = {
-      id: data.id != null ? Number(data.id) : null
-    };
+    var result = {};
+    result[this.idSpec.attr] = this.idSpec.parse(data);
     var attributes = this.registry.keyParseFunc(data.attributes || {});
     Object.entries(attributes).forEach(([name, value]) => {
       result[name] = value;
@@ -167,7 +186,7 @@ class Resource {
           }
         }
 
-        return Number(link.id);
+        return this.idSpec.parse(link);
       }
 
       return null;
