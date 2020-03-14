@@ -29,6 +29,14 @@ export default class Registry {
     return this.resources[type];
   }
 
+  format(type, data) {
+    const resource = this.find(type);
+    if (!resource) {
+      throw new Error(`Cannot find resource ${type}`);
+    }
+    return resource.document(data);
+  }
+
   parse(document) {
     const parseResource = (data, includesMap) => {
       const resource = this.find(data.type);
