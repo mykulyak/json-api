@@ -1,7 +1,5 @@
-import { kebabCaseDeep, camelCaseDeep } from "./utils";
+import { identity, kebabCaseDeep, camelCaseDeep } from "./utils";
 import Resource from "./Resource";
-
-const identity = x => x;
 
 export default class Registry {
   constructor(options) {
@@ -19,8 +17,8 @@ export default class Registry {
   }
 
   define(type, spec) {
-    const { attributes, relationships } = spec;
-    const resource = new Resource(this, type, attributes, relationships);
+    const { id, attributes, relationships } = spec;
+    const resource = new Resource(this, type, id, attributes, relationships);
     this.resources[type] = resource;
     return resource;
   }

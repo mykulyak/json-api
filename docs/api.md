@@ -48,14 +48,38 @@ const commentResource = registry.define('comment', {
 
 Resource specification is a plain JavaScript object that determines how attributes of data object will be mapped to field names of the JSON:API resource objects, and vice versa. Specification has two attributes:
 
+- `id` specification for resource ID
 - `attributes` **required** specifications for resource attribute
 - `relationships` **required** specifications for resource relationships
 
 #### Resource identifiers
 
+Default behaviour
+
 During formatting, if the ID attribute of the data object is `undefined`, resource object will not have the `id` field . If the ID attribute of the data object is `null`, resource object will also have its `id` field set to `null`. In other cases, resource identifier value will be formed by stringifying the ID attribute of the data object.
 
 During parsing, if the resource identifier is `null` or `undefined`, ID attribute of the data object is set to `null`. Otherwise, ID attribute is evaluated by converting resource ID to number.
+
+Default behaviour can be customized by passing `id` specification for resource ID. For example, let's imagine that we have `country` resource those data object looks like:
+
+```json
+{
+  "code": "GB",
+  "name": "Great Britain"
+}
+```
+
+Because "code" is a natural country identifier, corresponding resource could be defined like:
+
+```js
+registry.define("country", {
+  id: {
+    attr: "code",
+    format: value => value,
+    parse: resourceObj => resourceObj.id,
+  }
+});
+```
 
 #### Attribute specifications
 

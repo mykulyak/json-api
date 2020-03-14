@@ -25,6 +25,48 @@ describe("Resource", () => {
         attributes: {}
       });
     });
+
+    it("allows to override ID formatting & parsing behaviour", () => {
+      registry.define("country", {
+        id: {
+          attr: "code",
+          format(value) {
+            return value;
+          },
+          parse(resourceObj) {
+            return resourceObj.id;
+          }
+        },
+        attributes: ["name"]
+      });
+
+      expect(
+        registry.format("country", { code: "PL", name: "Poland" })
+      ).to.deep.equal({
+        data: {
+          type: "country",
+          id: "PL",
+          attributes: {
+            name: "Poland"
+          }
+        }
+      });
+
+      expect(
+        registry.parse({
+          data: {
+            type: "country",
+            id: "UA",
+            attributes: {
+              name: "Ukraine"
+            }
+          }
+        })
+      ).to.deep.equal({
+        code: "UA",
+        name: "Ukraine"
+      });
+    });
   });
 
   describe("attribute formatting", () => {
