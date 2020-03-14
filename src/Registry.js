@@ -17,8 +17,8 @@ export default class Registry {
   }
 
   define(type, spec) {
-    const { attributes, relationships } = spec;
-    const resource = new Resource(this, type, attributes, relationships);
+    const { id, attributes, relationships } = spec;
+    const resource = new Resource(this, type, id, attributes, relationships);
     this.resources[type] = resource;
     return resource;
   }

@@ -1,12 +1,31 @@
+const defaultIdSpec = {
+  attr: "id",
+  format(value) {
+    if (value === null) {
+      return null;
+    }
+    if (value === undefined) {
+      return undefined;
+    }
+    return String(value);
+  },
+  parse(resourceObj) {
+    return resourceObj[this.attr] != null
+      ? Number(resourceObj[this.attr])
+      : null;
+  }
+};
+
 const defaultAttributeSpec = {
   getter: (data, key) => data[key],
   formatter: value => value
 };
 
 export default class Resource {
-  constructor(registry, type, attributes, relationships) {
+  constructor(registry, type, id, attributes, relationships) {
     this.registry = registry;
     this.type = type;
+    this.idSpec = { ...defaultIdSpec, ...id };
     this.attributes = this.normalizeAttributes(attributes);
     this.relationships = this.normalizeRelationships(relationships, registry);
   }
@@ -77,14 +96,14 @@ export default class Resource {
   id(value) {
     return {
       type: this.type,
-      id: value != null ? String(value) : null
+      id: this.idSpec.format(value)
     };
   }
 
   link(value) {
     return {
       type: this.type,
-      id: value != null ? String(value) : null
+      id: this.idSpec.format(value)
     };
   }
 
@@ -93,10 +112,9 @@ export default class Resource {
       type: this.type
     };
 
-    if (data.id === null) {
-      result.id = null;
-    } else if (data.id !== undefined) {
-      result.id = String(data.id);
+    const id = this.idSpec.format(data[this.idSpec.attr]);
+    if (id !== undefined) {
+      result.id = id;
     }
 
     result.attributes = this.registry.keyTransformFunc(
@@ -136,7 +154,9 @@ export default class Resource {
   }
 
   parse(data, includesMap = null) {
-    const result = { id: data.id != null ? Number(data.id) : null };
+    const result = {};
+
+    result[this.idSpec.attr] = this.idSpec.parse(data);
 
     const attributes = this.registry.keyParseFunc(data.attributes || {});
     Object.entries(attributes).forEach(([name, value]) => {
@@ -151,7 +171,7 @@ export default class Resource {
             return obj;
           }
         }
-        return Number(link.id);
+        return this.idSpec.parse(link);
       }
       return null;
     };
