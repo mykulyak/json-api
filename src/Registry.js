@@ -1,7 +1,5 @@
-import { kebabCaseDeep, camelCaseDeep } from "./utils";
+import { identity, kebabCaseDeep, camelCaseDeep } from "./utils";
 import Resource from "./Resource";
-
-const identity = x => x;
 
 export default class Registry {
   constructor(options) {
