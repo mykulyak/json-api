@@ -1,3 +1,5 @@
+export const jsonApiMediaType = "(application/vnd.api+json";
+
 const transformKeysDeep = (obj, keyFn) => {
   if (Array.isArray(obj)) {
     return obj.map(o => transformKeysDeep(o, keyFn));

@@ -16,6 +16,36 @@ describe("Registry.define", () => {
   });
 });
 
+describe("Registry.format", () => {
+  let registry;
+
+  beforeEach(() => {
+    registry = new Registry();
+
+    registry.define("existing", {
+      attributes: ["attr"]
+    });
+  });
+
+  it("should format documents", () => {
+    expect(registry.format("existing", { id: 1, attr: "A" })).to.deep.equal({
+      data: {
+        type: "existing",
+        id: "1",
+        attributes: {
+          attr: "A"
+        }
+      }
+    });
+  });
+
+  it("throws an error when given unknown resource type", () => {
+    expect(() => {
+      registry.format("unknown", {});
+    }).to.throw();
+  });
+});
+
 describe("Registry.parse", () => {
   let registry;
 
