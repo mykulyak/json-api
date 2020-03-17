@@ -90,7 +90,7 @@ describe("Registry.parse", () => {
         }
       })
     ).to.deep.equal({
-      id: 12,
+      id: "12",
       title: "First survey",
       startDate: "2020-01-01",
       endDate: "2020-01-31"
@@ -118,8 +118,8 @@ describe("Registry.parse", () => {
         ]
       })
     ).to.deep.equal([
-      { id: 12, title: "First" },
-      { id: 34, title: "Second" }
+      { id: "12", title: "First" },
+      { id: "34", title: "Second" }
     ]);
   });
 
@@ -137,7 +137,7 @@ describe("Registry.parse", () => {
         }
       })
     ).to.deep.equal({
-      id: 12,
+      id: "12",
       children: null
     });
   });
@@ -159,8 +159,8 @@ describe("Registry.parse", () => {
         }
       })
     ).to.deep.equal({
-      id: 12,
-      children: 123
+      id: "12",
+      children: "123"
     });
   });
 
@@ -187,8 +187,8 @@ describe("Registry.parse", () => {
         ]
       })
     ).to.deep.equal({
-      id: 12,
-      children: { id: 123 }
+      id: "12",
+      children: { id: "123" }
     });
   });
 
@@ -219,8 +219,8 @@ describe("Registry.parse", () => {
         }
       })
     ).to.deep.equal({
-      id: 12,
-      children: [123, 125, 127]
+      id: "12",
+      children: ["123", "125", "127"]
     });
   });
 
@@ -265,8 +265,8 @@ describe("Registry.parse", () => {
         ]
       })
     ).to.deep.equal({
-      id: 12,
-      children: [{ id: 123 }, { id: 125 }, { id: 127 }]
+      id: "12",
+      children: [{ id: "123" }, { id: "125" }, { id: "127" }]
     });
   });
 
@@ -319,8 +319,8 @@ describe("Registry.parse", () => {
         ]
       })
     ).to.deep.equal({
-      id: 12,
-      children: { id: 123, parent: 12, children: 456 }
+      id: "12",
+      children: { id: "123", parent: "12", children: "456" }
     });
   });
 });
