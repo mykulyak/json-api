@@ -11,7 +11,7 @@ const defaultIdSpec = {
   },
   parse(resourceObj) {
     return resourceObj[this.attr] != null
-      ? Number(resourceObj[this.attr])
+      ? String(resourceObj[this.attr])
       : null;
   }
 };

@@ -27,7 +27,7 @@ var defaultIdSpec = {
   },
 
   parse(resourceObj) {
-    return resourceObj[this.attr] != null ? Number(resourceObj[this.attr]) : null;
+    return resourceObj[this.attr] != null ? resourceObj[this.attr] : null;
   }
 
 };
