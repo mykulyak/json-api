@@ -271,6 +271,64 @@ describe("Resource", () => {
   });
 });
 
+describe("Resource.parse", () => {
+  let registry;
+
+  const testData = {
+    data: {
+      type: "parent-type",
+      id: "1",
+      relationships: {
+        children: {
+          data: [{ type: "child-type", id: "11" }]
+        }
+      }
+    },
+    included: [
+      {
+        type: "child-type",
+        id: "11",
+        relationships: {
+          parent: {
+            data: { type: "parent-type", id: "1" }
+          }
+        }
+      }
+    ]
+  };
+
+  beforeEach(() => {
+    registry = new Registry();
+    registry.define("parent-type", {
+      attributes: [],
+      relationships: {
+        children: "child-type"
+      }
+    });
+    registry.define("child-type", {
+      attributes: [],
+      relationships: {
+        parent: "parent-type"
+      }
+    });
+  });
+
+  it("does not include resource type by default", () => {
+    expect(registry.parse(testData)).to.deep.equal({
+      id: "1",
+      children: [{ id: "11", parent: "1" }]
+    });
+  });
+
+  it("sets the resource type in the field specified", () => {
+    expect(registry.parse(testData, { typeAttr: "type_" })).to.deep.equal({
+      type_: "parent-type",
+      id: "1",
+      children: [{ type_: "child-type", id: "11", parent: "1" }]
+    });
+  });
+});
+
 describe("Resource.resource", () => {
   it("handles embedding resources", () => {
     // eslint-disable-next-line no-shadow

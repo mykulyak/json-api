@@ -297,9 +297,10 @@ will output
 
 Formats [document](https://jsonapi.org/format/#document-structure) whose top level `data` attributes will consists of resources formatted from `dataObj`.
 
-### parse(jsonApiData, includesMap = null)
+### parse(jsonApiData, includesMap = null, options = null)
 
 Parses [document](https://jsonapi.org/format/#document-structure) or [resource object](https://jsonapi.org/format/#document-resource-objects).
 
 - `jsonApiData` **required** object, document or resource data
 - `includesMap` hash of included data, whose keys are like `type:id`, and values are parsed included resources
+- `options.typeAttr` - if set, library will add attribute with such a name for each parsed resource, and will set its value to resource type. If not set (the default behaviour), resource types will not be set.

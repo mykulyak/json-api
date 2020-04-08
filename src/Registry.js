@@ -35,7 +35,7 @@ export default class Registry {
     return resource.document(data);
   }
 
-  parse(document) {
+  parse(document, options) {
     const parseResource = (data, includesMap) => {
       const resource = this.find(data.type);
 
@@ -43,7 +43,7 @@ export default class Registry {
         throw new Error(`Cannot find resource ${data.type}`);
       }
 
-      return resource.parse(data, includesMap);
+      return resource.parse(data, includesMap, options);
     };
 
     const includesMap = Array.isArray(document.included)

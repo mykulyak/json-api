@@ -153,8 +153,12 @@ export default class Resource {
     };
   }
 
-  parse(data, includesMap = null) {
+  parse(data, includesMap = null, options = null) {
     const result = {};
+
+    if (options && options.typeAttr) {
+      result[options.typeAttr] = this.type;
+    }
 
     result[this.idSpec.attr] = this.idSpec.parse(data);
 
