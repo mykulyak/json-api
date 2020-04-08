@@ -44,7 +44,7 @@ class Registry {
     return resource.document(data);
   }
 
-  parse(document) {
+  parse(document, options) {
     var parseResource = (data, includesMap) => {
       var resource = this.find(data.type);
 
@@ -52,7 +52,7 @@ class Registry {
         throw new Error("Cannot find resource ".concat(data.type));
       }
 
-      return resource.parse(data, includesMap);
+      return resource.parse(data, includesMap, options);
     };
 
     var includesMap = Array.isArray(document.included) ? document.included.reduce((accum, res) => {

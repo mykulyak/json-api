@@ -168,8 +168,13 @@ class Resource {
     };
   }
 
-  parse(data, includesMap = null) {
+  parse(data, includesMap = null, options = null) {
     var result = {};
+
+    if (options && options.typeAttr) {
+      result[options.typeAttr] = this.type;
+    }
+
     result[this.idSpec.attr] = this.idSpec.parse(data);
     var attributes = this.registry.keyParseFunc(data.attributes || {});
     Object.entries(attributes).forEach(([name, value]) => {
